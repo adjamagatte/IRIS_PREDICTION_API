@@ -1,5 +1,11 @@
 scikit-learn
 pandas
+numpy
 joblib
 fastapi
 uvicorn
+# pip install --only-binary :all: evidently
+
+# evidently  # Install with --only-binary :all:
+
+

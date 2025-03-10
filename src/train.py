@@ -1,38 +1,42 @@
-import logging
-from fastapi import FastAPI
-from pydantic import BaseModel
 import joblib
-import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+import os
 
-# Configurer le logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Créer le dossier models s'il n'existe pas
+os.makedirs("models", exist_ok=True)
 
-# Charger le modèle et le scaler
-model = joblib.load("models/iris_model.pkl")
-scaler = joblib.load("models/scaler.pkl")
+def train():
+    # Charger le dataset
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
 
-app = FastAPI()
+    # Séparer les données
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-class PredictionRequest(BaseModel):
-    features: list
+    # Normalisation
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
-@app.get("/")
-def home():
-    return {"message": "Bienvenue sur l'API de prédiction d'Iris !"}
+    # Entraînement
+    model = LogisticRegression(max_iter=200)
+    model.fit(X_train, y_train)
 
-@app.post("/predict/")
-def predict(request: PredictionRequest):
-    # Récupérer les features depuis la requête
-    features = np.array(request.features).reshape(1, -1)
-    
-    # Normalisation des features
-    features_scaled = scaler.transform(features)
-    
-    # Prédiction
-    prediction = model.predict(features_scaled)
-    
-    # Logger la requête et la prédiction
-    logger.info(f"Prediction request: {request.features} => Prediction: {int(prediction[0])}")
-    
-    return {"prediction": int(prediction[0])}
+    # Évaluation
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Précision du modèle : {accuracy:.2f}")
+
+    # Sauvegarde
+    joblib.dump(model, "models/iris_model.pkl")
+    joblib.dump(scaler, "models/scaler.pkl")
+
+
+if __name__ == "__main__":
+    train()

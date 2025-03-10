@@ -8,6 +8,7 @@ Ce projet illustre le cycle de vie d'un modèle de machine learning en productio
 - La sauvegarde du modèle et du scaler.
 - Une API FastAPI pour servir les prédictions.
 - Un déploiement sur un service gratuit (Render/Railway).
+- La détection de drift des données et le réentraînement automatique du modèle si nécessaire.
 
 ## Structure du projet
 
@@ -21,6 +22,7 @@ mlops_project/
 │   ├── train.py              # Entraînement du modèle
 │   ├── preprocess.py         # Prétraitement des données
 │   ├── predict.py            # Test des prédictions
+│   ├── monitor.py            # Détection de drift et réentraînement
 │── api/                      # API avec FastAPI
 │   ├── main.py               # Endpoint pour les prédictions
 │── notebooks/                # Notebooks pour l'exploration des données (optionnel)
@@ -35,9 +37,9 @@ mlops_project/
 ### 1️⃣ Créer et activer un environnement virtuel
 
 ```bash
-python -m venv venv  # Création de l'environnement
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate  # Windows
+python -m venv iris_venv  # Création de l'environnement
+source iris_venv/bin/activate  # Linux/Mac
+iris_venv\Scripts\activate  # Windows
 ```
 
 ### 2️⃣ Installer les dépendances
@@ -58,16 +60,32 @@ python src/train.py
 python src/predict.py
 ```
 
-## API FastAPI (Bientôt)
+### 5️⃣ Lancer l'API
 
-Un fichier `main.py` sera ajouté dans `api/` pour servir le modèle via une API.
+```bash
+uvicorn api.main:app --reload
+```
+
+Accédez à l'API via [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+## API FastAPI
+
+Un endpoint `/predict` permet de soumettre des données et d'obtenir une prédiction.
+
+Un endpoint `/` affiche un message de bienvenue.
+
+## Monitoring et Data Drift
+
+- Un script `monitor.py` détecte le drift des données.
+- Si un drift est détecté, le modèle est réentraîné automatiquement.
 
 ## TODO
 
 ✅ Entraînement du modèle\
 ✅ Sauvegarde du modèle\
 ✅ Test local des prédictions\
-⬜ Implémentation de l'API\
+✅ Implémentation de l'API\
+✅ Détection de drift des données\
 ⬜ Déploiement
 
 ---

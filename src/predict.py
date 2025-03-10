@@ -2,8 +2,8 @@ import joblib
 import numpy as np
 
 def predict(data):
-    model = joblib.load("../models/iris_model.pkl")
-    processed_data = joblib.load("../models/scaler.pkl").transform([data])
+    model = joblib.load("models/iris_model.pkl")
+    processed_data = joblib.load("models/scaler.pkl").transform([data])
     prediction = model.predict(processed_data)
     return prediction[0]
 
