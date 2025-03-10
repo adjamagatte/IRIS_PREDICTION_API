@@ -1,0 +1,14 @@
+# Fichiers d'environnement virtuel
+venv/
+*.pyc
+__pycache__/
+
+# Fichiers de modèle et logs
+models/
+logs/
+
+# Configurations et dépendances
+.DS_Store
+.env
+.idea/
+.vscode/
